@@ -11,81 +11,30 @@ library(plyr)
 
 brodmann <- read.NIFTI("E:/PhD/Statistical Inference II/HW5/brodmann_my.nii")
 
-summary.fmridata(brodmann)
-
-test <- read.NIFTI("cons_can/con_0006.img")
-
-summary.fmridata(test)
-
 file <- read.ANALYZE("cons_can/con_0", numbered = T, postfix="", 6, 12)
 
 # create expected BOLD signal and design matrix
-hrf <- fmri.stimulus(3, c(53, 63, 46), 15, 2); hrf
-
-hrf <- fmri.stimulus(scans = 53 , c(1), c(1), type="canonical"); hrf
+hrf <- fmri.stimulus(scans=12, onsets=mean(0.2, 4), durations=c(0.5)); hrf
 
 dhrf <- (c(0,diff(hrf)) + c(diff(hrf),0))/2
 
 x <- fmri.design(cbind(hrf, dhrf))
 
-x <- fmri.design(hrf); x
+mask <- file$mask
 
-x <- fmri.design()
-
-spm <- fmri.lm(test, brodmann) # problemi
-
-ttt <- test$ttt
-
-ttt$dimension
-
-t.test()
+spm <- fmri.lm(file, x, mask=mask) # problems
 
 # structure adaptive smoothing with maximum bandwith hmax
-spmsmooth <- fmri.smooth(spm, hmax=hmax)
+spmsmooth <- fmri.smooth(spm)
+
 # calculate p-values for smoothed parametric map
 pvalue <- fmri.pvalue(spmsmooth)
+
 # plot result slicewise into file or ...
-plot(pvalue, maxpvalue=0.01, device="jpeg", file="result.jpeg")
+plot(pvalue, maxpvalue=0.05, device="jpeg", file="result.jpeg")
+
 # ... plot interactive 3D visualization
-plot(pvalue, maxpvalue=0.01, type="3d")
-
-
-
-z <- fmri.design(hrf,2)
-model <- fmri.lm(file,z)
-plot(file$ttt)
-lines(data$ttt[16,16,16,] - model$res[16,16,16,],col=2)
-
-
-plot.fmridata(file)
-
-
-
-library(AnalyzeFMRI)
-imageFileName <- "cons_can/con_0006.img"
-img <- f.read.analyze.volume(imageFileName)[,,,1]
-
-img
-
-headerFileName <- "cons_can/con_0006.hdr"
-hdr <- f.read.analyze.header(headerFileName)
-# We can visualize this image using the image function.
-# visualize the image
-tempImg <- img
-tempImg[is.na(tempImg)] <- min(img, na.rm = TRUE)
-for(k in 1: dim(img)[3]){
-  image(tempImg[,,k], axes = FALSE)
-}
-
-
-library(AnalyzeFMRI)
-# the directory where the images are stored
-fileDir <- "cons_can/con_0006"
-# the collection of images
-files <- dir(fileDir, pattern = "*.img", full.names = TRUE)
-
-# obtain the image dimensions by loading the first image
-imageDim <- f.read.analyze.header(files)
+plot(pvalue, maxpvalue=0.05, type="3d")
 
 
 # Others ----
@@ -99,20 +48,20 @@ summary(ttt)
 image(as.nifti(ttt))
 
 # prova 1 (NON VA IL MODELLO):
-img <- test
+img <- file
 onsets <- c(5.25, 21.45,
             100.12, 1)
 dur <-  c(5, 5, 10, 1)
-hrf <-  fmri.stimulus(scans = img$dim0[4],
+hrf <-  fmri.stimulus(scans = file$dim0[4],
                       times = onsets,
                       durations = c(1))
 
 x <-  fmri.design(hrf, order =2)
-mask <-  test$mask
+mask <-  file$mask
 dataMatrix <-  NULL
 noScans <-  test$dim[4]
 for(t in 1:noScans){
-  scan <-  ttt[,,,t]
+  scan <-  file[,,,t]
   dataMatrix <-  rbind(dataMatrix, scan[mask])
 }
 lms <-  apply(dataMatrix, 2, function(y) lm(y,x))
