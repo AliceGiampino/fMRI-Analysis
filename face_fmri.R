@@ -1,17 +1,17 @@
 
 rm(list = ls())
 
-# setwd("path")
+setwd("E:\\PhD\\Statistical Inference II\\HW5\\face_rfx")
 
 # import data face_rfx > cons_fir
 # Subject-specific t-contrasts 
 # on the main effect of faces versus baseline
 # on the canonical HRF
 
-source("threshold_k.R")
-source("optimal_cluster.R")
-source("cluster_gini.R")
-source("threshold.R")
+source("E:\\PhD\\Statistical Inference II\\HW5\\threshold_k.R")
+source("E:\\PhD\\Statistical Inference II\\HW5\\optimal_cluster.R")
+source("E:\\PhD\\Statistical Inference II\\HW5\\cluster_gini.R")
+source("E:\\PhD\\Statistical Inference II\\HW5\\threshold.R")
 
 
 library(fmri)
@@ -425,6 +425,8 @@ map.broad_sel <- (mask.brodmann[,,,1]>0)==T
 map.broad_sel[mask3D==0] <- 0
 map.broad_sel[map.broad==F] <- 0
 map.broad_sel[map.broad==T] <- 1
+map_sub_att <- map
+table(map_sub_att)
 map.broad_sel[map_sub_att==0] <- 0
 contour3d(map.broad_sel, level=1, alpha=1, add=T, color="blue")
 for (i in 1:length(colsK)){
@@ -587,10 +589,10 @@ z = coord[,3]
 
 dd = dist(coord[clusters,])
 hc = hclust(dd, "single")
-# plot(hc)
-# abline(h=3, col=2)
+plot(hc)
+abline(h=1, col=2)
 K=4
-ct = cutree(hc,k=K)
+ct = cutree(hc, h=1)
 table(ct)
 
 clusters2 = clusters
