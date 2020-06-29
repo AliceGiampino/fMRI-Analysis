@@ -1,17 +1,17 @@
 
 rm(list = ls())
 
-setwd("E:\\PhD\\Statistical Inference II\\HW5\\face_rfx")
+# setwd("path")
 
 # import data face_rfx > cons_fir
 # Subject-specific t-contrasts 
 # on the main effect of faces versus baseline
 # on the canonical HRF
 
-source("E:\\PhD\\Statistical Inference II\\HW5\\threshold_k.R")
-source("E:\\PhD\\Statistical Inference II\\HW5\\optimal_cluster.R")
-source("E:\\PhD\\Statistical Inference II\\HW5\\cluster_gini.R")
-source("E:\\PhD\\Statistical Inference II\\HW5\\threshold.R")
+source("threshold_k.R")
+source("optimal_cluster.R")
+source("cluster_gini.R")
+source("threshold.R")
 
 
 library(fmri)
